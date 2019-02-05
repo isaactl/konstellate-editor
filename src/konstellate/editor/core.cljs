@@ -194,3 +194,5 @@
                              swagger-path {:with-credentials? false})
                            :recurrent/dom-$ (recurrent.drivers.dom/for-id! "app")})))))
 
+
+(.addEventListener js/document "DOMContentLoaded" start!)
