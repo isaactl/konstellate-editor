@@ -91,7 +91,6 @@
                                 required (:required outer)
                                 prop-names (map (fn [[k v]] (str (name k))) k8s-props)
                                 hovered (get k8s-props hovered-prop)]
-                            (println (keys outer))
                             `[:div {:class "key-picker in"}
                               [:div {:class ~(str "button inverse create " (if hovered-prop "show"))} ~(:action props)]
                               [:div {:class "content"}
@@ -254,7 +253,6 @@
                    :recurrent/dom-$
                    (ulmus/map
                      (fn [[hovered? children]]
-                       (println children)
                        `[:div {:class "array" 
                                :data-path ~path}
 
@@ -304,8 +302,6 @@
                                   definitions
                                   path-to-definition)]
 
-                       (println "have spec" spec)
-                       (println "for" k)
                        (cond 
                          (:$ref spec)
                          ((state/isolate Editor [k])
