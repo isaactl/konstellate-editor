@@ -195,7 +195,7 @@
              order (sets/intersection
                      (or (:order (meta object)) ks)
                      ks)]
-       `[:div {:class "object-editor" :data-path ~path}
+       `[:div {:class ~(str "object-editor " (if hovered? "hover")) :data-path ~path}
          [:span ~(str (:property props) " (object)")]
          ~(when hovered?
             (add-remove-dom path "kv-editor"))
@@ -253,7 +253,7 @@
                    :recurrent/dom-$
                    (ulmus/map
                      (fn [[hovered? children]]
-                       `[:div {:class "array" 
+                       `[:div {:class ~(str "array " (if hovered? "hover"))
                                :data-path ~path}
 
                         ~(when hovered?

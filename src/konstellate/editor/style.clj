@@ -3,7 +3,7 @@
     garden.selectors
     [garden.core :as garden]
     [garden.def :refer [defkeyframes]]
-    [onion-components.style :as components]))
+    [konstellate.components.style :as components]))
 
 (def shadow "0 5px 25px 0 rgba(46, 91, 255, 0.4)")
 (def primary "#FEA7BD")
@@ -187,6 +187,9 @@
     :position "relative"
     :padding "16px"}
 
+   [:&.hover {:border (str "1px solid " highlight)
+              :box-shadow shadow}]
+
    [:.array-add-remove {:animation "FadeInAnim 300ms ease"
                         :display "flex"
                         :position "absolute"
@@ -217,6 +220,8 @@
                     :border (str "1px solid " grey)
                     :border-radius "4px"
                     :padding "16px"}
+   [:&.hover {:border (str "1px solid " highlight)
+              :box-shadow shadow}]
    [(garden.selectors/> "" :span) {:display "block"
                                    :padding "8px"
                                    :font-size "16px"
