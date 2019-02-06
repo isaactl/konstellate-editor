@@ -94,6 +94,19 @@
                  :left 0
                  :right 0
                  :z-index 2}
+   [:.close {:color "white"
+             :cursor "pointer"
+             :border "2px solid white"
+             :border-radius "50%"
+             :font-weight "bold"
+             :font-size "18px"
+             :position "absolute"
+             :top "32px"
+             :right "64px"
+             :line-height "26px"
+             :text-align "center"
+             :width "32px"
+             :height "32px"}]
    [:.button {:position "absolute"
               :bottom "-64px"
               :right "64px"

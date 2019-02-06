@@ -85,6 +85,7 @@
                                       ((:recurrent/dom-$ sources)
                                        ".create.button" "click")))]
     {:selected-$ selected-$
+     :close-$ ((:recurrent/dom-$ sources) ".close" "click")
      :recurrent/dom-$ (ulmus/map
                         (fn [[definitions k8s-props hovered-prop]]
                           (let [outer (get definitions (keyword (:kind props)))
@@ -93,6 +94,7 @@
                                 hovered (get k8s-props hovered-prop)]
                             `[:div {:class "key-picker in"}
                               [:div {:class ~(str "button inverse create " (if hovered-prop "show"))} ~(:action props)]
+                              [:div {:class "close"} "x"]
                               [:div {:class "content"}
                                [:div {:class "properties"}
                                 [:h1 ~(:heading props)]
@@ -295,7 +297,9 @@
                        ((:recurrent/dom-$ sources) "> .add" "click")
                        ((:recurrent/dom-$ sources) "> .obj-add-remove > .add" "click")))
           (ulmus/map (constantly false)
-                     (:selected-$ key-picker)))
+                     (ulmus/merge
+                       (:selected-$ key-picker)
+                       (:close-$ key-picker))))
         make-child (fn [definitions k]
                      (let [path-to-definition [(keyword (:kind props)) :properties k]
                            spec (get-in 
@@ -337,7 +341,7 @@
                           sources)
                          :else
                          ((state/isolate TextInput [k])
-                          {:disabled? (= k :kind)
+                          {:disabled? (some #{k} [:kind :apiVersion])
                            :error? (not spec)
                            :label (str (name k))
                            :type (keyword (:type spec))}
@@ -397,7 +401,7 @@
                             ~(when (not (:parent props))
                                ^{:hipo/key "top-level-add-button"}
                                [:div {:class "add"} "+"])
-                            ^{:hipo/key "kind"}
+                            ^{:hipo/key "editor-kind"}
                              [:div {:class "kind"}
                               ~(when (not (empty? (:property props)))
                                  [:span (str (:property props)

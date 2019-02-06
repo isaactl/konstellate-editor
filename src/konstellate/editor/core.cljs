@@ -65,6 +65,10 @@
 (defn Editor 
   [props sources]
   (let [kind-name (last (string/split (str (name (:kind props))) "."))
+        api-version (-> (name (:kind props))
+                        (string/replace "io.k8s.api." "")
+                        (string/replace (str "." kind-name) "")
+                        (string/replace "." "/"))
         hovered-editor-$
         (ulmus/distinct
           (ulmus/map (fn [e]
@@ -84,12 +88,15 @@
                                    :hovered-editor-$ hovered-editor-$
                                    :recurrent/state-$ (:recurrent/state-$ sources)
                                    :recurrent/dom-$ (:recurrent/dom-$ sources)})
+
+        initial-state {:kind kind-name
+                       :apiVersion api-version}
         text-area-state-$ 
         (ulmus/map
           (fn [e]
             (let [parsed (yaml->clj (.-value (.-target e)))]
               (cond
-                (empty? (.-value (.-target e))) (fn [] {:kind kind-name})
+                (empty? (.-value (.-target e))) (fn [] initial-state)
                 parsed (fn [] parsed)
                 :else identity)))
           (ulmus/merge
@@ -116,7 +123,7 @@
                    keyboard/up-events-$)
      :recurrent/state-$ 
      (ulmus/start-with!
-       (fn [] (or (:initial-value props) {:kind kind-name}))
+       (fn [] (or (:initial-value props) initial-state))
        (ulmus/merge
          (ulmus/map (fn [path-to-remove]
                       (let [[at & path]
@@ -157,6 +164,7 @@
                     ^{:hipo/key "text-area"}
                     [:textarea {:class "text-edit"
                                 :value (string/trim (clj->yaml state))}]]
+                   ^{:hipo/key "bar"}
                    [:div {:class "bar"}
                     [:div {:class "button outline done"} "Start Over"]
                     [:div {:style "flex:1"}]
