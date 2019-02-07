@@ -122,7 +122,8 @@
                               (clj->js {:type "text/plain"}))
                             (string/lower-case
                               (str (:kind state)
-                                   (if named (str "-" named))))))))
+                                   (if named (str "-" named))
+                                   ".yml"))))))
                       
 
     {:done-$ 
