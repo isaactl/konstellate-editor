@@ -57,12 +57,11 @@
 (def LeftRight [:.left-right
                 {:display "grid"
                  :flex 1
-                 :height "100%"
-                 :max-height "100%"
                  :grid-gap "16px"
                  :grid-template-columns "1fr 1fr"}
                 [:.text-edit {:background "black"
                               :font-size "12px"
+                              :font-family "monospace"
                               :color "white"
                               :padding "32px"
                               :border (str "1px solid " grey)

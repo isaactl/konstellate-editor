@@ -56,6 +56,7 @@
                               :io.k8s.api.core.v1.Volume
                               :io.k8s.api.storage.v1beta1.VolumeAttachment]}
                      {:definitions-$ definitions-$
+                      :hidden-keys-$ (ulmus/signal-of [])
                       :recurrent/dom-$ (:recurrent/dom-$ sources)})]
     (assoc 
       key-picker
@@ -68,7 +69,8 @@
         api-version (-> (name (:kind props))
                         (string/replace "io.k8s.api." "")
                         (string/replace (str "." kind-name) "")
-                        (string/replace "." "/"))
+                        (string/replace "." "/")
+                        (string/replace "core/" ""))
         hovered-editor-$
         (ulmus/distinct
           (ulmus/map (fn [e]
@@ -108,13 +110,15 @@
 
     (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
                       (fn []
-                        (js/saveAs
-                          (js/Blob.
-                            (clj->js [
-                                      (clj->yaml @(:recurrent/state-$ sources))
-                                      ])
-                            (clj->js {:type "text/plain"}))
-                          "resource.yml")))
+                        (let [state @(:recurrent/state-$ sources)
+                              named (get-in state [:metadata :name])]
+                          (js/saveAs
+                            (js/Blob.
+                              (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
+                              (clj->js {:type "text/plain"}))
+                            (string/lower-case
+                              (str (:kind state)
+                                   (if named (str "-" named))))))))
                       
 
     {:done-$ 
@@ -163,6 +167,7 @@
                     gui-editor
                     ^{:hipo/key "text-area"}
                     [:textarea {:class "text-edit"
+                                :spellcheck "false"
                                 :value (string/trim (clj->yaml state))}]]
                    ^{:hipo/key "bar"}
                    [:div {:class "bar"}

@@ -55,16 +55,22 @@
   [props sources]
   (let [props-$ 
         (ulmus/map
-          (fn [definitions]
+          (fn [[definitions hidden-keys]]
             (into {}
               (filter (fn [[k]] 
-                        (if (:limit props)
+                        (cond
+                          (:limit props)
                           (some #{k} (:limit props))
+                          hidden-keys
+                          (not (some #{k} hidden-keys))
+                          :else
                           true))
                 (if (:kind props)
                   (get-in definitions [(keyword (:kind props)) :properties])
                   definitions))))
-          (:definitions-$ sources))
+          (ulmus/zip
+            (:definitions-$ sources)
+            (:hidden-keys-$ sources)))
         hovered-prop-$ (ulmus/map
                          (fn [e]
                            (keyword
@@ -289,7 +295,9 @@
         key-picker (KeyPicker (assoc props
                                      :action "Add"
                                      :heading (str "What property do you want to add to the " (last (string/split (str (name (:kind props))) ".")) "?"))
-                              sources)
+                              (assoc sources
+                                     :hidden-keys-$ (ulmus/map keys (:recurrent/state-$ sources))))
+
         key-picker-open?-$
         (ulmus/merge
           (ulmus/map (constantly true)
