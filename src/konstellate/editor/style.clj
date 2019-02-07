@@ -36,6 +36,7 @@
 
 (def Main [:.editor-main {:width "100%"
                           :height "100%"
+                          :max-height "100vh"
                           :padding "64px 64px 32px"
                           :display "flex"
                           :flex-direction "column"}
