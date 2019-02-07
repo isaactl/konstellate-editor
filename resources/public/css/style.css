@@ -22,7 +22,6 @@ body * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .button {
@@ -104,6 +103,7 @@ body * {
 .left-right {
   display: grid;
   flex: 1;
+  min-height: 0;
   grid-gap: 16px;
   grid-template-columns: 1fr 1fr;
 }
@@ -183,14 +183,14 @@ body * {
 }
 
 .key-picker {
-  right: 0;
-  top: 0;
-  position: fixed;
   animation: FadeInAnim 300ms ease;
-  z-index: 2;
-  font-size: 14px;
   bottom: 0;
+  font-size: 14px;
+  top: 0;
   background: white;
+  z-index: 2;
+  right: 0;
+  position: fixed;
   left: 0;
 }
 

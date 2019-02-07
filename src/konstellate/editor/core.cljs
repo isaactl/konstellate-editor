@@ -105,6 +105,10 @@
             ((:recurrent/dom-$ sources) ".text-edit" "change")))]
 
 
+    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".tooltip" "mouseover")
+                      #(.log js/console
+                         (.getBoundingClientRect (.-currentTarget %))))
+
     (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
                       #(start!))
 

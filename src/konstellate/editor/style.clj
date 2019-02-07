@@ -32,8 +32,7 @@
            :height "100%"}]
    [:body [:* {:box-sizing "border-box"
                :margin 0
-               :padding 0
-               :-ms-overflow-style "-ms-autohiding-scrollbar"}]]])
+               :padding 0}]]])
 
 (def Main [:.editor-main {:width "100%"
                           :height "100%"
@@ -57,6 +56,7 @@
 (def LeftRight [:.left-right
                 {:display "grid"
                  :flex 1
+                 :min-height 0
                  :grid-gap "16px"
                  :grid-template-columns "1fr 1fr"}
                 [:.text-edit {:background "black"

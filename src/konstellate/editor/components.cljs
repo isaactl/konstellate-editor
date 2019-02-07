@@ -410,7 +410,9 @@
                                ^{:hipo/key "top-level-add-button"}
                                [:div {:class "add"} "+"])
                             ^{:hipo/key "editor-kind"}
-                             [:div {:class "kind"}
+                             [:div {:class "kind tooltip"
+                                    :data-foo "bar"
+                                    :data-tooltip ~(:description definitions)}
                               ~(when (not (empty? (:property props)))
                                  [:span (str (:property props)
                                              (when (:recurrent/key props)
@@ -419,7 +421,9 @@
                              ~(if key-picker-open? key-picker-dom)])
                         (ulmus/zip
                           hovered?-$
-                          (:definitions-$ sources)
+                          (ulmus/map
+                            #(get % (keyword (:kind props)))
+                            (:definitions-$ sources))
                           (ulmus/distinct 
                             children-dom-$)
                           key-picker-open?-$
