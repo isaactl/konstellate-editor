@@ -37,6 +37,7 @@
         key-picker (components/KeyPicker 
                      {:action "Create"
                       :heading "What type of resource do you want to create?"
+                      :single? true
                       :limit [:io.k8s.api.core.v1.Container
                               :io.k8s.api.batch.v1beta1.CronJob
                               :io.k8s.api.apps.v1.DaemonSet

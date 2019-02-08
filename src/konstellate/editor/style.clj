@@ -32,7 +32,8 @@
            :height "100%"}]
    [:body [:* {:box-sizing "border-box"
                :margin 0
-               :padding 0}]]])
+               :padding 0}]]
+   ["input[type=checkbox]" {:visibility "hidden"}]])
 
 (def Main [:.editor-main {:width "100%"
                           :height "100%"
@@ -110,7 +111,8 @@
    [:.button {:position "absolute"
               :bottom "-64px"
               :right "64px"
-              :transition "bottom 300ms ease"}
+              :transition "bottom 300ms ease"
+              :z-index 2}
     [:&.show {:bottom "32px"}]]
    [:.content {:display "grid"
                :grid-template-columns "61% 39%"
@@ -129,7 +131,9 @@
                    :text-overflow "ellipsis"}
     [:.fade {:opacity 0
              :animation "FadeInAnim 300ms ease forwards"}]]
-    [:h4 {:margin-top "16px"}]]
+    [:h4 {:margin-top "16px"
+          :font-size "15px"
+          :font-weight "bold"}]]
    [:.properties {:color text
                   :max-height "100%"
                   :padding "64px"

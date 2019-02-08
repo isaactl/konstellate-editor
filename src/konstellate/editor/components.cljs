@@ -76,28 +76,46 @@
                            (keyword
                              (.getAttribute (.-target e) "data-prop")))
                          ((:recurrent/dom-$ sources) ".property" "click"))
+        hovered-props-$ (ulmus/reduce (fn [hovered-props [p hidden]]
+                                        (sets/difference
+                                          (cond
+                                            (not p) hovered-props
+                                            (:single? props) #{p}
+                                            (some #{p} hovered-props)
+                                            (disj hovered-props p)
+                                            :else
+                                            (conj hovered-props p))
+                                          hidden))
+                                      #{} 
+                                      (ulmus/zip
+                                        hovered-prop-$
+                                        (:hidden-keys-$ sources)))
         ; Look here
         ; return as selected-$
-        hovered-definition-$ (ulmus/map
-                               (fn [[props hovered-prop]]
-                                 {:property hovered-prop
-                                  :definition (get props hovered-prop)})
+        hovered-definitions-$ (ulmus/map
+                               (fn [[props hovered-props]]
+                                 (map
+                                   (fn [hovered-prop]
+                                     {:property hovered-prop
+                                      :definition (get props hovered-prop)})
+                                   hovered-props))
                                (ulmus/zip
                                  props-$
-                                 hovered-prop-$))
-        selected-$ (ulmus/sample-on hovered-definition-$
-                                    (ulmus/merge
-                                      ((:recurrent/dom-$ sources) ".property" "dblclick")
-                                      ((:recurrent/dom-$ sources)
-                                       ".create.button" "click")))]
+                                 hovered-props-$))
+        selected-$ (ulmus/flatten
+                     (ulmus/sample-on hovered-definitions-$
+                                      (ulmus/merge
+                                        ((:recurrent/dom-$ sources) ".property" "dblclick")
+                                        ((:recurrent/dom-$ sources)
+                                         ".create.button" "click"))))]
     {:selected-$ selected-$
      :close-$ ((:recurrent/dom-$ sources) ".close" "click")
      :recurrent/dom-$ (ulmus/map
-                        (fn [[definitions k8s-props hovered-prop]]
+                        (fn [[definitions k8s-props hovered-props hovered-prop]]
                           (let [outer (get definitions (keyword (:kind props)))
                                 required (:required outer)
                                 prop-names (map (fn [[k v]] (str (name k))) k8s-props)
-                                hovered (get k8s-props hovered-prop)]
+                                hovered-definitions (remove nil? (map #(with-meta (get k8s-props %) {:prop %}) (sort hovered-props)))]
                             `[:div {:class "key-picker in"}
                               [:div {:class ~(str "button inverse create " (if hovered-prop "show"))} ~(:action props)]
                               [:div {:class "close"} "x"]
@@ -109,32 +127,45 @@
                                            (let [prop-name (last (string/split p "."))]
                                              [:li {:data-prop p
                                                    :class (str "property" 
-                                                               (if (= (keyword p) hovered-prop) " selected"))}
+                                                               (if (some #{(keyword p)} hovered-props)
+                                                                 " selected"))}
                                               prop-name
                                               (if (some #{prop-name} required)
                                                 [:span " (required)"])]))
                                          (sort prop-names))]]
                                [:div {:class "description"}
-                                ~(when hovered
-                                    [:div {:class "fade in"}
-                                     [:h4 "Description:"]
-                                     (:description hovered)
-                                     [:h4 "Type:"]
-                                     (if (:$ref hovered)
-                                       (string/replace (:$ref hovered)
-                                                       "#/definitions/" "")
-                                       (:type hovered))
-                                     (if (:$ref hovered)
-                                       [:div 
-                                        [:br]
-                                         (get-in definitions
-                                                 [(keyword
-                                                    (string/replace (:$ref hovered)
-                                                                    "#/definitions/" ""))
-                                                  :description])])])]]]))
+                                ~@(when (not (empty? hovered-definitions))
+                                    (map 
+                                      (fn [hovered]
+                                        [:div {:class "fade in"}
+                                         [:br]
+                                         "--"
+                                         [:h4
+                                          (name (:prop (meta hovered)))]
+                                         [:h4 "Description:"]
+                                         (:description hovered)
+                                         [:h4 "Type:"]
+                                         (if (:$ref hovered)
+                                           (string/replace (:$ref hovered)
+                                                           "#/definitions/" "")
+                                           (:type hovered))
+                                         (if (:$ref hovered)
+                                           [:div 
+                                            [:br]
+                                            (get-in definitions
+                                                    [(keyword
+                                                       (string/replace (:$ref hovered)
+                                                                       "#/definitions/" ""))
+                                                     :description])])])
+                                      hovered-definitions))
+                                [:br]
+                                [:br]
+                                [:br]
+                                [:br]]]]))
                         (ulmus/zip
                           (:definitions-$ sources)
                           props-$
+                          hovered-props-$
                           hovered-prop-$))}))
 
 (defn ObjectEditor
@@ -294,7 +325,7 @@
                      (:hovered-editor-$ sources))
         key-picker (KeyPicker (assoc props
                                      :action "Add"
-                                     :heading (str "What property do you want to add to the " (last (string/split (str (name (:kind props))) ".")) "?"))
+                                     :heading (str "What properties do you want to add to the " (last (string/split (str (name (:kind props))) ".")) "?"))
                               (assoc sources
                                      :hidden-keys-$ (ulmus/map keys (:recurrent/state-$ sources))))
 
