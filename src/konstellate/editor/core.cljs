@@ -1,6 +1,6 @@
 (ns konstellate.editor.core
   (:require 
-    recurrent.drivers.dom
+    recurrent.drivers.vdom
     recurrent.drivers.http
     cljsjs.js-yaml
     cljsjs.filesaverjs
@@ -197,7 +197,7 @@
       {:swagger-$
        (recurrent.drivers.http/create!
          swagger-path {:with-credentials? false})
-       :recurrent/dom-$ (recurrent.drivers.dom/for-id! "app")})))
+       :recurrent/dom-$ (recurrent.drivers.vdom/for-id! "app")})))
 
 
 (defn start!
@@ -211,7 +211,6 @@
                           {:swagger-$
                            (recurrent.drivers.http/create!
                              swagger-path {:with-credentials? false})
-                           :recurrent/dom-$ (recurrent.drivers.dom/for-id! "app")})))))
+                           :recurrent/dom-$ (recurrent.drivers.vdom/for-id! "app")})))))
 
 
-(.addEventListener js/document "DOMContentLoaded" start!)

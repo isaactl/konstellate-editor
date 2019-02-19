@@ -1,6 +1,6 @@
 (ns konstellate.editor.components
   (:require
-    recurrent.drivers.dom
+    recurrent.drivers.vdom
     [clojure.pprint :as pprint]
     [clojure.set :as sets]
     [clojure.string :as string]
@@ -121,11 +121,11 @@
                               [:div {:class "close"} "x"]
                               [:div {:class "content"}
                                [:div {:class "properties"}
-                                [:h1 ~(:heading props)]
-                                [:ul
+                                [:h1 {} ~(:heading props)]
+                                [:ul {}
                                  ~@(mapv (fn [p]
                                            (let [prop-name (last (string/split p "."))]
-                                             [:li {:data-prop p
+                                             [:li {:attributes {:data-prop p}
                                                    :class (str "property" 
                                                                (if (some #{(keyword p)} hovered-props)
                                                                  " selected"))}
@@ -138,30 +138,30 @@
                                     (map 
                                       (fn [hovered]
                                         [:div {:class "fade in"}
-                                         [:br]
+                                         [:br {}]
                                          "--"
-                                         [:h4
+                                         [:h4 {}
                                           (name (:prop (meta hovered)))]
-                                         [:h4 "Description:"]
+                                         [:h4 {} "Description:"]
                                          (:description hovered)
-                                         [:h4 "Type:"]
+                                         [:h4 {} "Type:"]
                                          (if (:$ref hovered)
                                            (string/replace (:$ref hovered)
                                                            "#/definitions/" "")
                                            (:type hovered))
                                          (if (:$ref hovered)
-                                           [:div 
-                                            [:br]
+                                           [:div {}
+                                            [:br {}]
                                             (get-in definitions
                                                     [(keyword
                                                        (string/replace (:$ref hovered)
                                                                        "#/definitions/" ""))
                                                      :description])])])
                                       hovered-definitions))
-                                [:br]
-                                [:br]
-                                [:br]
-                                [:br]]]]))
+                                [:br {}]
+                                [:br {}]
+                                [:br {}]
+                                [:br {}]]]]))
                         (ulmus/zip
                           (:definitions-$ sources)
                           props-$
