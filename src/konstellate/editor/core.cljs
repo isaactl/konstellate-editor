@@ -130,7 +130,7 @@
     {:done-$ 
      (ulmus/filter (fn [e] 
                      (= (.-key e) "Escape"))
-                   keyboard/up-events-$)
+                   keyboard/up-$)
      :recurrent/state-$ 
      (ulmus/start-with!
        (fn [] (or (:initial-value props) initial-state))
