@@ -29,12 +29,7 @@
 
 (defn KindPicker
   [props sources]
-  (let [definitions-$
-        (ulmus/map (fn [swagger-text]
-                     (:definitions (js->clj (.parse js/JSON swagger-text)
-                                            :keywordize-keys true)))
-                   ((:swagger-$ sources) [:get]))
-        key-picker (components/KeyPicker 
+  (let [key-picker (components/KeyPicker 
                      {:action "Create"
                       :heading "What type of resource do you want to create?"
                       :single? true
@@ -56,7 +51,7 @@
                               :io.k8s.api.storage.v1.StorageClass
                               :io.k8s.api.core.v1.Volume
                               :io.k8s.api.storage.v1beta1.VolumeAttachment]}
-                     {:definitions-$ definitions-$
+                     {:definitions-$ (:definitions-$ sources)
                       :hidden-keys-$ (ulmus/signal-of [])
                       :recurrent/dom-$ (:recurrent/dom-$ sources)})]
     (assoc 
@@ -81,13 +76,8 @@
                        ((:recurrent/dom-$ sources) ".object-editor" "mouseover")
                        ((:recurrent/dom-$ sources) ".editor" "mouseover")
                        ((:recurrent/dom-$ sources) ".array" "mouseover"))))
-        definitions-$
-        (ulmus/map (fn [swagger-text]
-                     (:definitions (js->clj (.parse js/JSON swagger-text)
-                                            :keywordize-keys true)))
-                   ((:swagger-$ sources) [:get]))
         editor (components/Editor {:kind (:kind props)}
-                                  {:definitions-$ definitions-$
+                                  {:definitions-$ (:definitions-$ sources)
                                    :hovered-editor-$ hovered-editor-$
                                    :recurrent/state-$ (:recurrent/state-$ sources)
                                    :recurrent/dom-$ (:recurrent/dom-$ sources)})
@@ -113,7 +103,7 @@
     (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
                       #(start!))
 
-    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
+    (comment ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
                       (fn []
                         (let [state @(:recurrent/state-$ sources)
                               named (get-in state [:metadata :name])]
@@ -131,6 +121,7 @@
      (ulmus/filter (fn [e] 
                      (= (.-key e) "Escape"))
                    keyboard/up-$)
+     :save-$ ((:recurrent/dom-$ sources) ".button.save" "click")
      :recurrent/state-$ 
      (ulmus/start-with!
        (fn [] (or (:initial-value props) initial-state))
@@ -167,7 +158,7 @@
      (ulmus/map (fn [[state gui-editor]]
                   ^{:hipo/key "editor-main"}
                   [:div {:class "editor-main"}
-                   [:h1 "Edit Resource"]
+                   [:h1 {} "Edit Resource"]
                    ^{:hipo/key "left-right"}
                    [:div {:class "left-right"}
                     gui-editor

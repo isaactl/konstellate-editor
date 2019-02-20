@@ -41,9 +41,9 @@
      :recurrent/dom-$ (ulmus/map
                         (fn [value]
                           [:div {:class "text-input"}
-                           [:label (str (:label props)
-                                        (when (:recurrent/key props)
-                                          (str "[" (:recurrent/key props) "]")))]
+                           [:label {} (str (:label props)
+                                           (when (:recurrent/key props)
+                                             (str "[" (:recurrent/key props) "]")))]
                            [:input {:disabled (if (:disabled? props)
                                                 true false)
                                     :class (str (if (:error? props) "error"))
@@ -131,7 +131,7 @@
                                                                  " selected"))}
                                               prop-name
                                               (if (some #{prop-name} required)
-                                                [:span " (required)"])]))
+                                                [:span {} " (required)"])]))
                                          (sort prop-names))]]
                                [:div {:class "description"}
                                 ~@(when (not (empty? hovered-definitions))
@@ -235,7 +235,7 @@
                      (or (:order (meta object)) ks)
                      ks)]
        `[:div {:class ~(str "object-editor " (if hovered? "hover")) :data-path ~path}
-         [:span ~(str (:property props) " (object)")]
+         [:span {} ~(str (:property props) " (object)")]
          ~(when hovered?
             (add-remove-dom path "kv-editor"))
          ~@(map-indexed
@@ -244,13 +244,13 @@
                  ^{:hipo/key i}
                  [:div {:class "element"}
                   [:div {:class "text-input"}
-                   [:label "Key"]
+                   [:label {} "Key"]
                    [:input {:data-key (str (name k))
                             :class "key-input"
                             :type "text"
                             :value (str (name k))}]]
                   [:div {:class "text-input"}
-                   [:label "Value"]
+                   [:label {} "Value"]
                    [:input {:data-key (str (name k))
                             :class "value-input"
                             :type "text"
@@ -302,7 +302,7 @@
                             [:img {:class "add" :src "images/plus.svg"}]])
 
                          ^{:hipo/key "array-name"}
-                         [:span ~(str (:property props) " (array)")]
+                         [:span {} ~(str (:property props) " (array)")]
                          ~@children])
                      (ulmus/zip
                        hovered?-$
@@ -445,7 +445,7 @@
                                     :data-foo "bar"
                                     :data-tooltip ~(:description definitions)}
                               ~(when (not (empty? (:property props)))
-                                 [:span (str (:property props)
+                                 [:span {} (str (:property props)
                                              (when (:recurrent/key props)
                                                (str "["(:recurrent/key props)"]")))])
                               ~@child-dom]
