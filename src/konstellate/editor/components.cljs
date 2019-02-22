@@ -21,8 +21,8 @@
 
 (defn add-remove-dom
   [path c]
-  [:div {:data-path path :class (str "add-remove " c)}
-   [:img {:data-path path :class "remove" :src "images/minus.svg"}]
+  [:div {:attributes {:data-path path} :class (str "add-remove " c)}
+   [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
    [:img {:class "add" :src "images/plus.svg"}]])
 
 (recurrent/defcomponent TextInput
@@ -234,7 +234,7 @@
              order (sets/intersection
                      (or (:order (meta object)) ks)
                      ks)]
-       `[:div {:class ~(str "object-editor " (if hovered? "hover")) :data-path ~path}
+       `[:div {:class ~(str "object-editor " (if hovered? "hover")) :attributes {:data-path ~path}}
          [:span {} ~(str (:property props) " (object)")]
          ~(when hovered?
             (add-remove-dom path "kv-editor"))
@@ -245,17 +245,17 @@
                  [:div {:class "element"}
                   [:div {:class "text-input"}
                    [:label {} "Key"]
-                   [:input {:data-key (str (name k))
+                   [:input {:attributes {:data-key (str (name k))}
                             :class "key-input"
                             :type "text"
                             :value (str (name k))}]]
                   [:div {:class "text-input"}
                    [:label {} "Value"]
-                   [:input {:data-key (str (name k))
+                   [:input {:attributes {:data-key (str (name k))}
                             :class "value-input"
                             :type "text"
                             :value (str v)}]]
-                  [:img {:data-path (str path "." (name k)) 
+                  [:img {:attributes {:data-path (str path "." (name k))}
                          :class "remove"
                          :src "images/minus.svg"}]]))
              order)]))
@@ -293,12 +293,12 @@
                    (ulmus/map
                      (fn [[hovered? children]]
                        `[:div {:class ~(str "array " (if hovered? "hover"))
-                               :data-path ~path}
+                               :attributes {:data-path ~path}}
 
                         ~(when hovered?
                            ^{:hipo/key "Add-remove-array"}
-                           [:div {:data-path path :class "array-add-remove"}
-                            [:img {:data-path path :class "remove" :src "images/minus.svg"}]
+                           [:div {:attributes {:data-path path} :class "array-add-remove"}
+                            [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
                             [:img {:class "add" :src "images/plus.svg"}]])
 
                          ^{:hipo/key "array-name"}
@@ -431,19 +431,18 @@
      :recurrent/dom-$ (ulmus/map 
                         (fn [[hovered? definitions child-dom key-picker-open? key-picker-dom]]
                           `[:div {:class ~(str "editor " (if hovered? "hover"))
-                                  :data-path ~path}
+                                  :attributes {:data-path ~path}}
                             ~(when (and (:parent props) hovered?)
                                ^{:hipo/key "obj-add-remove"}
-                               [:div {:data-path path :class "obj-add-remove"}
-                                [:img {:data-path path :class "remove" :src "images/minus.svg"}]
+                               [:div {:attributes {:data-path path} :class "obj-add-remove"}
+                                [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
                                 [:img {:class "add" :src "images/plus.svg"}]])
                             ~(when (not (:parent props))
                                ^{:hipo/key "top-level-add-button"}
                                [:div {:class "add"} "+"])
                             ^{:hipo/key "editor-kind"}
                              [:div {:class "kind tooltip"
-                                    :data-foo "bar"
-                                    :data-tooltip ~(:description definitions)}
+                                    :attributes {:data-tooltip ~(:description definitions)}}
                               ~(when (not (empty? (:property props)))
                                  [:span {} (str (:property props)
                                              (when (:recurrent/key props)

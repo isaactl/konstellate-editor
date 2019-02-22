@@ -70,6 +70,7 @@
         hovered-editor-$
         (ulmus/distinct
           (ulmus/map (fn [e]
+                       (println e)
                        (.stopPropagation e)
                        (.getAttribute (.-currentTarget e) "data-path"))
                      (ulmus/merge
@@ -83,7 +84,9 @@
                                    :recurrent/dom-$ (:recurrent/dom-$ sources)})
 
         initial-state {:kind kind-name
-                       :apiVersion api-version}
+                       :apiVersion api-version
+                       :metadata {:name ""}}
+
         text-area-state-$ 
         (ulmus/map
           (fn [e]
