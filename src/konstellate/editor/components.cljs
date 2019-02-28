@@ -390,8 +390,10 @@
 
         children-$ (ulmus/reduce 
                      (fn [prev-children [definitions state]]
-                       (if (or (not state)
-                               (not definitions))
+                       (if 
+                         (and (empty? prev-children)
+                              (or (not state)
+                                  (not definitions)))
                          {}
                          (let [make (partial make-child definitions)
                                state-keys (set (keys state))
