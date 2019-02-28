@@ -1,5 +1,6 @@
 (ns konstellate.editor.components
   (:require
+    recurrent.core
     recurrent.drivers.vdom
     [clojure.pprint :as pprint]
     [clojure.set :as sets]
@@ -398,6 +399,9 @@
                                new-keys (sets/difference 
                                           state-keys child-keys)
                                lost-keys (sets/difference child-keys state-keys)]
+
+                           (doseq [k lost-keys]
+                             (recurrent.core/close! (prev-children k)))
 
                            (merge
                              (apply dissoc prev-children lost-keys)

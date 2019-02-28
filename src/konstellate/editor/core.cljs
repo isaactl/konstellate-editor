@@ -27,6 +27,15 @@
     (js/jsyaml.safeLoad x)
     :keywordize-keys true))
 
+(defn parse-swagger-definitions
+  [swagger]
+  (get
+    (js->clj
+      (.parse js/JSON swagger)
+      :keywordize-keys true)
+    :definitions))
+
+
 (defn KindPicker
   [props sources]
   (let [key-picker (components/KeyPicker 
@@ -51,7 +60,9 @@
                               :io.k8s.api.storage.v1.StorageClass
                               :io.k8s.api.core.v1.Volume
                               :io.k8s.api.storage.v1beta1.VolumeAttachment]}
-                     {:definitions-$ (:definitions-$ sources)
+                     {:definitions-$ (or (:definitions-$ sources)
+                                         (ulmus/map parse-swagger-definitions
+                                                    ((:swagger-$ sources) [:get])))
                       :hidden-keys-$ (ulmus/signal-of [])
                       :recurrent/dom-$ (:recurrent/dom-$ sources)})]
     (assoc 
@@ -78,7 +89,10 @@
                        ((:recurrent/dom-$ sources) ".editor" "mouseover")
                        ((:recurrent/dom-$ sources) ".array" "mouseover"))))
         editor (components/Editor {:kind (:kind props)}
-                                  {:definitions-$ (:definitions-$ sources)
+                                  {:definitions-$ (or (:definitions-$ sources)
+                                                      (ulmus/map
+                                                        parse-swagger-definitions
+                                                        ((:swagger-$ sources) [:get])))
                                    :hovered-editor-$ hovered-editor-$
                                    :recurrent/state-$ (:recurrent/state-$ sources)
                                    :recurrent/dom-$ (:recurrent/dom-$ sources)})
@@ -196,9 +210,11 @@
 
 (defn start!
   []
-  (let [swagger-path "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json"]
-    (ulmus/subscribe! (:selected-$ (pick-kind!))
+  (let [swagger-path "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json"
+        kind-picker (pick-kind!)]
+    (ulmus/subscribe! (:selected-$ kind-picker)
                       (fn [selected]
+                        (recurrent.core/close! kind-picker)
                         (recurrent.core/start!
                           (state/with-state Editor)
                           {:kind (:property selected)}
