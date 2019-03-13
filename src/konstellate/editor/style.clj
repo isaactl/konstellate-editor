@@ -11,6 +11,7 @@
 (def grey "#dfe3e8")
 (def highlight "#00a2ff")
 (def text "#212b35")
+(def light-text "#b0bac9")
 
 (defkeyframes FadeInAnim
   [:from {:opacity 0
@@ -41,9 +42,12 @@
                           :padding "64px 64px 32px"
                           :display "flex"
                           :flex-direction "column"}
-           [:h1 {:margin-bottom "32px"}]
+           [:h1 {:color "white"
+                 :margin-bottom "32px"}]
            [:.bar {:display "flex"
-                   :margin-top "32px"}]])
+                   :margin-top "32px"}
+            [:.done {:background "white"}]
+            [:.save {:background highlight}]]])
 
 (def AddRemove
   [:.add-remove {:animation "FadeInAnim 300ms ease"
@@ -66,8 +70,10 @@
                               :font-family "monospace"
                               :color "white"
                               :padding "32px"
-                              :border (str "1px solid " grey)
-                              :border-radius "8px"}]])
+                              :border "none"
+                              :outline "none"
+                              :border-radius "8px"
+                              :resize "none"}]])
 
 (def TextInput
   [:.text-input
@@ -87,7 +93,7 @@
 
 (def KeyPicker
   [:.key-picker {:animation "FadeInAnim 300ms ease"
-                 :background "white"
+                 :background "linear-gradient(170deg, #212b35, #081018)"
                  :position "fixed"
                  :font-size "14px"
                  :top 0
@@ -119,9 +125,9 @@
                :height "100%"
                :max-height "100%"
                :transition "opacity 300ms ease"}
-   [:.description {:color "white"
+   [:.description {:color light-text
                    :background "black"
-                   :box-shadow "0 2px 4px 0 rgba(0, 0, 0, 0.5), 0 5px 25px 0 rgba(46, 91, 255, 0.4)"
+                   :box-shadow "0 2px 4px 0 rgba(0, 0, 0, 0.5), 0 5px 25px 0 #081018"
                    :line-height "1.6em"
                    :max-height "100%"
                    :max-width "100%"
@@ -132,20 +138,22 @@
     [:.fade {:opacity 0
              :animation "FadeInAnim 300ms ease forwards"}]]
     [:h4 {:margin-top "16px"
-          :font-size "15px"
-          :font-weight "bold"}]]
+          :font-size "12px"
+          :letter-spacing "2px"
+          :text-transform "uppercase"}]]
    [:.properties {:color text
                   :max-height "100%"
                   :padding "64px"
                   :overflow-y "auto"}
-    [:h1 {:margin-bottom "32px"}]]
+    [:h1 {:color "white"
+          :margin-bottom "32px"}]]
    [:.property {:border-radius "4px"
                 :border (str "1px solid " grey)
+                :color "white"
                 :cursor "pointer"
                 :list-style "none"
-                :margin "8px"
+                :margin "12px"
                 :padding "16px"
-                :font-weight "bold"
                 :transition "box-shadow 500ms ease, border 500ms ease"}
     [:span {:color highlight}]
     [:&.selected {:border (str "1px solid " highlight)
@@ -154,7 +162,8 @@
 
 (def Editor
   [:.editor
-   {:border (str "1px solid " grey)
+   {:background "white"
+    :border (str "1px solid " grey)
     :box-shadow "0px 0px 0px rgba(0,0,0,0)"
     :border-radius "8px"
     :overflow-y "auto"
@@ -172,7 +181,7 @@
     [:img {:cursor "pointer"
            :display "block"
            :margin-right "16px"}]]
-  [(garden.selectors/> "" :.add) {:background "black"
+  [(garden.selectors/> "" :.add) {:background highlight
                                   :border-radius "50%"
                                   :box-shadow shadow
                                   :color "white"
