@@ -1,7 +1,7 @@
 (ns konstellate.editor.components
   (:require
     recurrent.core
-    recurrent.drivers.vdom
+    recurrent.drivers.rum
     [clojure.pprint :as pprint]
     [clojure.set :as sets]
     [clojure.string :as string]
@@ -22,8 +22,8 @@
 
 (defn add-remove-dom
   [path c]
-  [:div {:attributes {:data-path path} :class (str "add-remove " c)}
-   [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
+  [:div {:data-path path :class (str "add-remove " c)}
+   [:img {:data-path path :class "remove" :src "images/minus.svg"}]
    [:img {:class "add" :src "images/plus.svg"}]])
 
 (recurrent/defcomponent TextInput
@@ -48,7 +48,8 @@
                            [:input {:disabled (if (:disabled? props)
                                                 true false)
                                     :class (str (if (:error? props) "error"))
-                                    :type "text" :value value}]])
+                                    :type "text" 
+                                    :default-value value}]])
                         (ulmus/distinct
                           (:recurrent/state-$ sources)))}))
 
@@ -126,7 +127,7 @@
                                 [:ul {}
                                  ~@(mapv (fn [p]
                                            (let [prop-name (last (string/split p "."))]
-                                             [:li {:attributes {:data-prop p}
+                                             [:li {:data-prop p
                                                    :class (str "property" 
                                                                (if (some #{(keyword p)} hovered-props)
                                                                  " selected"))}
@@ -235,28 +236,28 @@
              order (sets/intersection
                      (or (:order (meta object)) ks)
                      ks)]
-       `[:div {:class ~(str "object-editor " (if hovered? "hover")) :attributes {:data-path ~path}}
+       `[:div {:class ~(str "object-editor " (if hovered? "hover")) :data-path ~path}
          [:span {} ~(str (:property props) " (object)")]
          ~(when hovered?
             (add-remove-dom path "kv-editor"))
          ~@(map-indexed
              (fn [i k]
                (let [v (object k)]
-                 ^{:hipo/key i}
-                 [:div {:class "element"}
+                 [:div {:key i
+                        :class "element"}
                   [:div {:class "text-input"}
                    [:label {} "Key"]
-                   [:input {:attributes {:data-key (str (name k))}
+                   [:input {:data-key (str (name k))
                             :class "key-input"
                             :type "text"
-                            :value (str (name k))}]]
+                            :default-value (str (name k))}]]
                   [:div {:class "text-input"}
                    [:label {} "Value"]
-                   [:input {:attributes {:data-key (str (name k))}
+                   [:input {:data-key (str (name k))
                             :class "value-input"
                             :type "text"
-                            :value (str v)}]]
-                  [:img {:attributes {:data-path (str path "." (name k))}
+                            :default-value (str v)}]]
+                  [:img {:data-path (str path "." (name k))
                          :class "remove"
                          :src "images/minus.svg"}]]))
              order)]))
@@ -294,15 +295,13 @@
                    (ulmus/map
                      (fn [[hovered? children]]
                        `[:div {:class ~(str "array " (if hovered? "hover"))
-                               :attributes {:data-path ~path}}
+                               :data-path ~path}
 
                         ~(when hovered?
-                           ^{:hipo/key "Add-remove-array"}
-                           [:div {:attributes {:data-path path} :class "array-add-remove"}
-                            [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
+                           [:div {:data-path path :class "array-add-remove"}
+                            [:img {:data-path path :class "remove" :src "images/minus.svg"}]
                             [:img {:class "add" :src "images/plus.svg"}]])
 
-                         ^{:hipo/key "array-name"}
                          [:span {} ~(str (:property props) " (array)")]
                          ~@children])
                      (ulmus/zip
@@ -347,7 +346,8 @@
                                   path-to-definition)]
 
                        (cond 
-                         (:$ref spec)
+                         (and (:$ref spec)
+                              (not (string/includes? (:$ref spec) "IntOrString")))
                          ((state/isolate Editor [k])
                           (assoc props
                                  :parent path
@@ -430,6 +430,7 @@
                       "string" ""
                       "integer" 0
                       "array" []
+                      "object" {}
                       {}))))
          (:selected-$ key-picker))
        (ulmus/distinct children-state-$))
@@ -437,18 +438,16 @@
      :recurrent/dom-$ (ulmus/map 
                         (fn [[hovered? definitions child-dom key-picker-open? key-picker-dom]]
                           `[:div {:class ~(str "editor " (if hovered? "hover"))
-                                  :attributes {:data-path ~path}}
+                                  :data-path ~path}
                             ~(when (and (:parent props) hovered?)
-                               ^{:hipo/key "obj-add-remove"}
-                               [:div {:attributes {:data-path path} :class "obj-add-remove"}
-                                [:img {:attributes {:data-path path} :class "remove" :src "images/minus.svg"}]
+                               [:div {:key "obj-add-remove" :data-path path :class "obj-add-remove"}
+                                [:img {:data-path path :class "remove" :src "images/minus.svg"}]
                                 [:img {:class "add" :src "images/plus.svg"}]])
                             ~(when (not (:parent props))
-                               ^{:hipo/key "top-level-add-button"}
                                [:div {:class "add"} "+"])
-                            ^{:hipo/key "editor-kind"}
-                             [:div {:class "kind tooltip"
-                                    :attributes {:data-tooltip ~(:description definitions)}}
+                             [:div {:key "tooltip"
+                                    :class "kind tooltip"
+                                    :data-tooltip ~(:description definitions)}
                               ~(when (not (empty? (:property props)))
                                  [:span {} (str (:property props)
                                              (when (:recurrent/key props)

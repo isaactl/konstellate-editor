@@ -36,7 +36,8 @@
                :padding 0}]]
    ["input[type=checkbox]" {:visibility "hidden"}]])
 
-(def Main [:.editor-main {:width "100%"
+(def Main [:.editor-main {:animation "FadeInAnim 500ms ease"
+                          :width "100%"
                           :height "100%"
                           :max-height "100vh"
                           :padding "64px 64px 32px"
@@ -147,14 +148,15 @@
                   :overflow-y "auto"}
     [:h1 {:color "white"
           :margin-bottom "32px"}]]
-   [:.property {:border-radius "4px"
-                :border (str "1px solid " grey)
+   [:.property {:background "#081018"
+                :border-radius "4px"
+                :border "1px solid transparent" 
                 :color "white"
                 :cursor "pointer"
                 :list-style "none"
                 :margin "12px"
                 :padding "16px"
-                :transition "box-shadow 500ms ease, border 500ms ease"}
+                :transition "box-shadow 750ms ease, border 250ms ease"}
     [:span {:color highlight}]
     [:&.selected {:border (str "1px solid " highlight)
                   :box-shadow shadow}]

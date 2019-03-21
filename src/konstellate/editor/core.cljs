@@ -1,6 +1,6 @@
 (ns konstellate.editor.core
   (:require 
-    recurrent.drivers.vdom
+    recurrent.drivers.rum
     recurrent.drivers.http
     cljsjs.js-yaml
     cljsjs.filesaverjs
@@ -81,7 +81,6 @@
         hovered-editor-$
         (ulmus/distinct
           (ulmus/map (fn [e]
-                       (println e)
                        (.stopPropagation e)
                        (.getAttribute (.-currentTarget e) "data-path"))
                      (ulmus/merge
@@ -110,7 +109,11 @@
                 parsed (fn [] parsed)
                 :else identity)))
           (ulmus/merge
-            ((:recurrent/dom-$ sources) ".text-edit" "change")))]
+            ((:recurrent/dom-$ sources) ".text-edit" "change")))
+        
+        ; merge text-area-state
+        ; and keydown events
+        text-area-value-$ (ulmus/map #(string/trim (clj->yaml %)) (:recurrent/state-$ sources))]
 
 
     (ulmus/subscribe! ((:recurrent/dom-$ sources) ".tooltip" "mouseover")
@@ -172,26 +175,22 @@
          (:recurrent/state-$ editor)
          text-area-state-$))
      :recurrent/dom-$ 
-     (ulmus/map (fn [[state gui-editor]]
-                  ^{:hipo/key "editor-main"}
-                  [:div {:class "editor-main"}
-                   [:h1 {} "Edit Resource"]
-                   ^{:hipo/key "left-right"}
+     (ulmus/map (fn [[state gui-editor text-area-value]]
+                  [:div {:class "editor-main" :key "editor-main"}
                    [:div {:class "left-right"}
                     gui-editor
-                    ^{:hipo/key "text-area"}
                     [:textarea {:class "text-edit"
-                                :spellcheck "false"
-                                :value (string/trim (clj->yaml state))}]]
-                   ^{:hipo/key "bar"}
+                                :spell-check "false"
+                                :value text-area-value}]]
                    [:div {:class "bar"}
                     [:div {:class "button outline done"} "Start Over"]
-                    [:div {:style "flex:1"}]
+                    [:div {:style {:flex 1}}]
                     [:div {:class "button primary save"} "Save"]]
                    ])
                 (ulmus/zip
                   (:recurrent/state-$ sources)
-                  (:recurrent/dom-$ editor)))
+                  (:recurrent/dom-$ editor)
+                  text-area-value-$))
 
      :swagger-$ (ulmus/signal-of [:get])}))
 
@@ -205,7 +204,7 @@
       {:swagger-$
        (recurrent.drivers.http/create!
          swagger-path {:with-credentials? false})
-       :recurrent/dom-$ (recurrent.drivers.vdom/for-id! "app")})))
+       :recurrent/dom-$ (recurrent.drivers.rum/create! "app")})))
 
 
 (defn start!
@@ -221,6 +220,8 @@
                           {:swagger-$
                            (recurrent.drivers.http/create!
                              swagger-path {:with-credentials? false})
-                           :recurrent/dom-$ (recurrent.drivers.vdom/for-id! "app")})))))
+                           :recurrent/dom-$ (recurrent.drivers.rum/create! "app")})))))
 
 
+
+;(.addEventListener js/document "DOMContentLoaded" start!)
