@@ -97,12 +97,21 @@ input[type=checkbox] {
 }
 
 .editor-main h1 {
+  color: white;
   margin-bottom: 32px;
 }
 
 .editor-main .bar {
   display: flex;
   margin-top: 32px;
+}
+
+.editor-main .bar .done {
+  background: white;
+}
+
+.editor-main .bar .save {
+  background: #00a2ff;
 }
 
 .left-right {
@@ -114,13 +123,15 @@ input[type=checkbox] {
 }
 
 .left-right .text-edit {
-  background: black;
-  font-size: 12px;
   font-family: monospace;
-  color: white;
+  border: none;
   padding: 32px;
-  border: 1px solid #dfe3e8;
+  outline: none;
+  font-size: 12px;
   border-radius: 8px;
+  resize: none;
+  background: black;
+  color: white;
 }
 
 .object-editor {
@@ -188,14 +199,14 @@ input[type=checkbox] {
 }
 
 .key-picker {
-  animation: FadeInAnim 300ms ease;
-  bottom: 0;
-  font-size: 14px;
-  top: 0;
-  background: white;
-  z-index: 2;
   right: 0;
+  top: 0;
   position: fixed;
+  animation: FadeInAnim 300ms ease;
+  z-index: 2;
+  font-size: 14px;
+  bottom: 0;
+  background: linear-gradient(170deg, #212b35, #081018);
   left: 0;
 }
 
@@ -242,10 +253,10 @@ input[type=checkbox] {
   word-break: break-word;
   padding: 64px;
   text-overflow: ellipsis;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5), 0 5px 25px 0 rgba(46, 91, 255, 0.4);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5), 0 5px 25px 0 #081018;
   background: black;
   max-height: 100%;
-  color: white;
+  color: #b0bac9;
 }
 
 .key-picker .content .description .fade {
@@ -255,8 +266,9 @@ input[type=checkbox] {
 
 .key-picker .content h4 {
   margin-top: 16px;
-  font-size: 15px;
-  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .key-picker .properties {
@@ -267,18 +279,20 @@ input[type=checkbox] {
 }
 
 .key-picker .properties h1 {
+  color: white;
   margin-bottom: 32px;
 }
 
 .key-picker .property {
-  border-radius: 4px;
-  border: 1px solid #dfe3e8;
-  cursor: pointer;
-  list-style: none;
-  margin: 8px;
+  margin: 12px;
+  border: 1px solid transparent;
   padding: 16px;
-  font-weight: bold;
-  transition: box-shadow 500ms ease, border 500ms ease;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: box-shadow 750ms ease, border 250ms ease;
+  background: #081018;
+  color: white;
+  list-style: none;
 }
 
 .key-picker .property span {
@@ -295,14 +309,15 @@ input[type=checkbox] {
 }
 
 .editor {
+  width: 100%;
+  overflow-y: auto;
   border: 1px solid #dfe3e8;
+  padding: 16px;
+  position: relative;
   box-shadow: 0px 0px 0px rgba(0,0,0,0);
   border-radius: 8px;
-  overflow-y: auto;
-  position: relative;
-  padding: 16px;
-  width: 100%;
   transition: box-shadow 500ms ease, border 500ms ease;
+  background: white;
 }
 
 .editor.hover {
@@ -335,7 +350,7 @@ input[type=checkbox] {
   box-shadow: 0 5px 25px 0 rgba(46, 91, 255, 0.4);
   border-radius: 50%;
   bottom: 128px;
-  background: black;
+  background: #00a2ff;
   color: white;
   left: calc(50% - 96px);
 }
