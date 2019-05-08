@@ -120,8 +120,9 @@
                       #(.log js/console
                          (.getBoundingClientRect (.-currentTarget %))))
 
-    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
-                      #(start!))
+
+    (comment ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
+             #(start!))
 
     (comment ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
                       (fn []
@@ -183,7 +184,7 @@
                                 :spell-check "false"
                                 :value text-area-value}]]
                    [:div {:class "bar"}
-                    [:div {:class "button outline done"} "Start Over"]
+                    [:div {:class "button outline done" :style {:display "none"}} "Start Over"]
                     [:div {:style {:flex 1}}]
                     [:div {:class "button primary save"} "Save"]]
                    ])
