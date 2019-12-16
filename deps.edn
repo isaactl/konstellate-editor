@@ -1,6 +1,7 @@
 {:deps {com.bhauman/figwheel-main {:mvn/version "0.1.9"}
         cljsjs/js-yaml {:mvn/version "3.3.1-0"}
         cljsjs/filesaverjs {:mvn/version "1.3.3-0"}
+        cljsjs/axios {:mvn/version "0.19.0-0"}
         garden {:mvn/version "1.3.6"}
         konstellate/components {:git/url "https://github.com/containership/konstellate-components"
                                 :sha "99517a1f362b15605332800482bec7320dcf3799"}

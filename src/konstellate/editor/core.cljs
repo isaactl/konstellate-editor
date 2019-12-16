@@ -3,6 +3,7 @@
     recurrent.drivers.rum
     recurrent.drivers.http
     cljsjs.js-yaml
+    cljsjs.axios
     cljsjs.filesaverjs
     [cljs.reader :refer [read-string]]
     [clojure.string :as string]
@@ -121,13 +122,14 @@
                          (.getBoundingClientRect (.-currentTarget %))))
 
 
-    (comment ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
+    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
              #(start!))
 
-    (comment ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
+    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.save" "click")
                       (fn []
                         (let [state @(:recurrent/state-$ sources)
                               named (get-in state [:metadata :name])]
+                          ; (println "Hello world!"))))
                           (js/saveAs
                             (js/Blob.
                               (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
@@ -184,7 +186,7 @@
                                 :spell-check "false"
                                 :value text-area-value}]]
                    [:div {:class "bar"}
-                    [:div {:class "button outline done" :style {:display "none"}} "Start Over"]
+                    [:div {:class "button outline done" :style {:display "block"}} "Start Over"]
                     [:div {:style {:flex 1}}]
                     [:div {:class "button primary save"} "Save"]]
                    ])
@@ -225,4 +227,4 @@
 
 
 
-;(.addEventListener js/document "DOMContentLoaded" start!)
+(.addEventListener js/document "DOMContentLoaded" start!)
