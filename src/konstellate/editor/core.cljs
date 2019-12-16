@@ -117,9 +117,9 @@
         text-area-value-$ (ulmus/map #(string/trim (clj->yaml %)) (:recurrent/state-$ sources))]
 
 
-    (ulmus/subscribe! ((:recurrent/dom-$ sources) ".tooltip" "mouseover")
-                      #(.log js/console
-                         (.getBoundingClientRect (.-currentTarget %))))
+    ; (ulmus/subscribe! ((:recurrent/dom-$ sources) ".tooltip" "mouseover")
+    ;                   #(.log js/console
+    ;                      (.getBoundingClientRect (.-currentTarget %))))
 
 
     (ulmus/subscribe! ((:recurrent/dom-$ sources) ".button.done" "click")
@@ -129,15 +129,20 @@
                       (fn []
                         (let [state @(:recurrent/state-$ sources)
                               named (get-in state [:metadata :name])]
-                          ; (println "Hello world!"))))
-                          (js/saveAs
-                            (js/Blob.
-                              (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
-                              (clj->js {:type "text/plain"}))
-                            (string/lower-case
-                              (str (:kind state)
-                                   (if named (str "-" named))
-                                   ".yml"))))))
+                          (println "Hello world!")
+                          (doto (js/axios.get "http://localhost:8089")
+                            (.then (fn [resp]
+                                    (js/console.log "resp: " resp)))
+                            (.catch (fn [err]
+                                    (println "err: " err)))))))
+                          ; (js/saveAs
+                          ;   (js/Blob.
+                          ;     (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
+                          ;     (clj->js {:type "text/plain"}))
+                          ;   (string/lower-case
+                          ;     (str (:kind state)
+                          ;          (if named (str "-" named))
+                          ;          ".yml"))))))
                       
 
     {:done-$ 

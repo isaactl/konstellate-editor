@@ -11,7 +11,7 @@ clojure -m figwheel.main -O advanced -bo prod
 ```
 
 ## Reference
-https://figwheel.org/tutorial#the-build
-https://clojurescript.org/guides/quick-start
-https://clojure.org/api/cheatsheet
-https://clojure.org/guides/learn/syntax
+* https://figwheel.org/tutorial#the-build
+* https://clojurescript.org/guides/quick-start
+* https://clojure.org/api/cheatsheet
+* https://clojure.org/guides/learn/syntax
