@@ -130,11 +130,14 @@
                         (let [state @(:recurrent/state-$ sources)
                               named (get-in state [:metadata :name])]
                           (println "Hello world!")
-                          (doto (js/axios.get "http://localhost:8089")
-                            (.then (fn [resp]
-                                    (js/console.log "resp: " resp)))
-                            (.catch (fn [err]
-                                    (println "err: " err)))))))
+                          (doto (js/axios.post 
+                            "/api/chart/liange2/templates/raw/goold.yaml"
+                            (clj->yaml @(:recurrent/state-$ sources))
+                            (clj->js {:headers {"Content-Type" "text/plain"}}))
+                                (.then (fn [resp]
+                                        (js/console.log "resp: " resp)))
+                                (.catch (fn [err]
+                                        (println "err: " err)))))))
                           ; (js/saveAs
                           ;   (js/Blob.
                           ;     (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
@@ -143,7 +146,6 @@
                           ;     (str (:kind state)
                           ;          (if named (str "-" named))
                           ;          ".yml"))))))
-                      
 
     {:done-$ 
      (ulmus/filter (fn [e] 
@@ -212,7 +214,7 @@
       {:swagger-$
        (recurrent.drivers.http/create!
          swagger-path {:with-credentials? false})
-       :recurrent/dom-$ (recurrent.drivers.rum/create! "app")})))
+       :recurrent/dom-$ (recurrent.drivers.rum/create! "editor")})))
 
 
 (defn start!
@@ -228,7 +230,7 @@
                           {:swagger-$
                            (recurrent.drivers.http/create!
                              swagger-path {:with-credentials? false})
-                           :recurrent/dom-$ (recurrent.drivers.rum/create! "app")})))))
+                           :recurrent/dom-$ (recurrent.drivers.rum/create! "editor")})))))
 
 
 
