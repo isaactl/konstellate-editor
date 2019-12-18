@@ -16,6 +16,48 @@
 
 (declare start!)
 
+; (defn by-id
+;   [id]
+;   (.getElementById
+;     js/document
+;     (name id)))
+
+(def chart
+  (.getAttribute 
+    (.getElementById js/document "editor_chart")
+    "value"))
+
+(def chartSource
+  (.getAttribute
+    (. js/document (getElementById "editor_source"))
+    "value"))
+
+; (println chartSource.innerHTML)
+; (println 
+;   (.getAttribute chartSource "name"))
+
+; (println 
+;   (goog.object/forEach chartSource.attributes
+;      (fn [val key obj]
+;         (println val key obj))))
+
+; (println
+;   (get-named-item chartSource.attributes "name"))
+
+; (println 
+;   (by-id "editor"))
+
+; (set! (.-value (.getElementById js/document "chart")) 23.3)
+
+; (println 
+;   (aget
+;     (by-id 
+;     "editor")
+;     "chart"))
+; (-> js/document
+;   (.getElementById "editor")
+;   (.-innerHTML)) ; returns contents of element with id 'app'
+
 (defonce style-scope (gensym))
 
 (defn clj->yaml
@@ -131,13 +173,17 @@
                               named (get-in state [:metadata :name])]
                           (println "Hello world!")
                           (doto (js/axios.post 
-                            "/api/chart/liange2/templates/raw/goold.yaml"
+                            (str "/api/chart/" chart "/templates/raw/" chart "-"  
+                              (string/lower-case
+                                (str (:kind state)
+                                     (if named (str "-" named))
+                                     ".yml")))
                             (clj->yaml @(:recurrent/state-$ sources))
                             (clj->js {:headers {"Content-Type" "text/plain"}}))
                                 (.then (fn [resp]
                                         (js/console.log "resp: " resp)))
                                 (.catch (fn [err]
-                                        (println "err: " err)))))))
+                                        (js/alert "err: " err)))))))
                           ; (js/saveAs
                           ;   (js/Blob.
                           ;     (clj->js [(clj->yaml @(:recurrent/state-$ sources))])
@@ -146,6 +192,7 @@
                           ;     (str (:kind state)
                           ;          (if named (str "-" named))
                           ;          ".yml"))))))
+
 
     {:done-$ 
      (ulmus/filter (fn [e] 
